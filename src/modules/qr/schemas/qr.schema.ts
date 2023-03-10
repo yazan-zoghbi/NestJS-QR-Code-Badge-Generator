@@ -3,18 +3,21 @@ import mongoose, { Document } from 'mongoose';
 import { Customer } from 'src/modules/customer/schema/customer.schema';
 import { QrType } from './qr.type.schema';
 
-export type QrCodeDocument = QrCode & Document;
+export type QrCodeDocument = QrBadge & Document;
 
 @Schema()
-export class QrCode {
+export class QrBadge {
   @Prop()
   data: string;
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Customer' }] })
-  customer_Id: Customer;
+  @Prop({ type: Buffer })
+  image: Buffer;
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'QrType' }] })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Customer' })
+  customer_id: Customer;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'QrType' })
   type_id: QrType;
 }
 
-export const QrCodeSchema = SchemaFactory.createForClass(QrCode);
+export const QrCodeSchema = SchemaFactory.createForClass(QrBadge);
