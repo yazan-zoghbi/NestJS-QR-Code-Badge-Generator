@@ -36,7 +36,7 @@ export class CustomerRepository {
     return await this.customerModel.find().exec();
   }
 
-  async addQrCode(customer_id: string, qrCodeId: string) {
+  async addQrCodeAfterGenerated(customer_id: string, qrCodeId: string) {
     return await this.customerModel.updateOne(
       { _id: customer_id },
       { qr_code_id: qrCodeId },

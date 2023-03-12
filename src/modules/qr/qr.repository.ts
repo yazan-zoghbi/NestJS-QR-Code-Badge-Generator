@@ -16,8 +16,12 @@ export class QrRepository {
   async createQrCode(qrCode: QrBadge): Promise<QrBadge> {
     console.log(qrCode.customer_id, qrCode.type_id);
     const createdQrCode = await new this.qrCodeModel(qrCode).save();
+    const qrCodeWithId = {
+      ...createdQrCode.toObject(),
+      id: createdQrCode._id.toString(),
+    };
 
-    return createdQrCode;
+    return qrCodeWithId;
   }
 
   async updateQrCode(qrCodeId, customerId, typeId) {

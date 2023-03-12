@@ -3,6 +3,14 @@ import mongoose, { Document } from 'mongoose';
 import { Customer } from 'src/modules/customer/schema/customer.schema';
 import { QrType } from './qr.type.schema';
 
+export interface QrBadge {
+  id: string;
+  data: string;
+  image: Buffer;
+  customer_id: Customer;
+  type_id: QrType;
+}
+
 export type QrCodeDocument = QrBadge & Document;
 
 @Schema()
