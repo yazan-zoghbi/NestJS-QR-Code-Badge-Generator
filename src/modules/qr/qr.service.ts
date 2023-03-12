@@ -15,23 +15,30 @@ export class QrService {
     private readonly customerRepository: CustomerRepository,
   ) {}
 
-  async generateQrCode(createQrDto: CreateQrDto) {
+  async generateQrCode(createQrDto: CreateQrDto): Promise<QrBadge> {
     const qrCodeData = await QRCode.toDataURL(createQrDto.data);
     const qrCodeImage = await QRCode.toBuffer(createQrDto.data);
-  
-    const customer = await this.customerRepository.findById(createQrDto.customer_id);
+
+    const customer = await this.customerRepository.findById(
+      createQrDto.customer_id,
+    );
     const qrType = await this.qrRepository.findQrTypeById(createQrDto.type_id);
-  
-    const qrCode = await this.qrRepository.createQrCode({
-      data: qrCodeData,
-      image: qrCodeImage,
-      customer_id: customer,
-      type_id: qrType,
-    });
-    
+
+    const qrCode = new QrBadge();
+    qrCode.data = qrCodeData;
+    qrCode.image = qrCodeImage;
+    qrCode.customer_id = customer;
+    qrCode.type_id = qrType;
+
+    const createdQrCode = await this.qrRepository.createQrCode(qrCode);
+
+    if (createdQrCode) {
+      await this.customerRepository.addQrCodeAfterGenerated(
+        createQrDto.customer_id,
+        createdQrCode.id,
+      );
+    }
 
     return qrCode;
   }
-  
-  
 }
