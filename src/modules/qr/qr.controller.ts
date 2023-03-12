@@ -16,6 +16,7 @@ export class QrController {
     return qrCode;
   }
 
+  // Create QR Type Route
   @Post('type/create')
   async createQrType(@Body() name: string) {
     const qrType = await this.qrTypeService.create(name);
