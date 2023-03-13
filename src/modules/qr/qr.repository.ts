@@ -14,7 +14,7 @@ export class QrRepository {
   ) {}
 
   async createQrCode(qrCode: QrBadge): Promise<QrBadge> {
-    console.log(qrCode.customer_id, qrCode.type_id);
+    console.log(qrCode.customer_id, qrCode.type);
     const createdQrCode = await new this.qrCodeModel(qrCode).save();
     const qrCodeWithId = {
       ...createdQrCode.toObject(),
@@ -35,7 +35,7 @@ export class QrRepository {
     return this.qrCodeModel
       .findById(id)
       .populate('customer_Id')
-      .populate('type_id');
+      .populate('type');
   }
 
   async findQrStatsByQrCodeId(qrCodeId: string): Promise<QrStats[]> {
