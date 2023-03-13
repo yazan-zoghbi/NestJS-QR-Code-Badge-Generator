@@ -18,17 +18,17 @@ export class QrService {
   async generateQrCode(createQrDto: CreateQrDto): Promise<QrBadge> {
     const qrCodeData = await QRCode.toDataURL(createQrDto.data);
     const qrCodeImage = await QRCode.toBuffer(createQrDto.data);
+    const qrType = createQrDto.type
 
     const customer = await this.customerRepository.findById(
       createQrDto.customer_id,
     );
-    const qrType = await this.qrRepository.findQrTypeById(createQrDto.type_id);
 
     const qrCode = new QrBadge();
     qrCode.data = qrCodeData;
     qrCode.image = qrCodeImage;
     qrCode.customer_id = customer;
-    qrCode.type_id = qrType;
+    qrCode.type = qrType;
 
     const createdQrCode = await this.qrRepository.createQrCode(qrCode);
 
