@@ -8,7 +8,12 @@ import { QrModule } from './modules/qr/qr.module';
 import { DatabaseModule } from './shared/database/database.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true, load: [databaseConfig] }), DatabaseModule, CustomerModule, QrModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true, load: [databaseConfig] }),
+    DatabaseModule,
+    CustomerModule,
+    QrModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

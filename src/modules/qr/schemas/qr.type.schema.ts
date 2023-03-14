@@ -6,7 +6,7 @@ export type QrTypeDocument = QrType & Document;
 
 @Schema()
 export class QrType {
-  @Prop({ enum: Object.values(QRTypeEnum), required: true })
+  @Prop()
   name: QRTypeEnum;
 }
 
