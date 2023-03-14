@@ -1,18 +1,15 @@
-import { CustomerData } from '../customer-data.interface';
-import { GenerateQRDataService } from 'src/shared/generate-data/generate-qr-data.service';
+import { CustomerData, VCardData } from '../customer-data.interface';
 import { QRTypeEnum } from '../qr-type.enum';
+import { IsDefined, IsEnum } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateQrDto {
-  readonly customerData: CustomerData;
-  readonly customer_id: string;
-  readonly type: QRTypeEnum;
+  @IsDefined()
+  @Type(() => Object)
+  readonly customerData: CustomerData | VCardData;
 
-  constructor(private readonly generateQRDataService: GenerateQRDataService) {}
-  get data(): string {
-    return this.generateQRDataService.generate(
-      this.type,
-      this.customerData,
-      this.customer_id,
-    );
-  }
+  readonly customer_id: string;
+
+  @IsEnum(QRTypeEnum)
+  readonly type: QRTypeEnum;
 }
