@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { QRTypeEnum } from './qr-type.enum';
 import { QrBadge } from './schemas/qr.schema';
 import { QrStats } from './schemas/qr.stats.schema';
 import { QrType } from './schemas/qr.type.schema';
@@ -57,6 +58,16 @@ export class QrRepository {
   async findQrTypeById(id: string): Promise<QrType> {
     return this.qrTypeModel.findById(id);
   }
+
+  async findQRTypeByName(name:QRTypeEnum){
+    const qrType = await this.qrTypeModel.findOne({ name: name }).exec();
+
+    if (!qrType) {
+      throw new NotFoundException(`QR type ${name} not found`);
+    }
+
+    return qrType
+    }
 
   async findAllQrTypes(): Promise<QrType[]> {
     return this.qrTypeModel.find();
