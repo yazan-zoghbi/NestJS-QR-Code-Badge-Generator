@@ -1,7 +1,7 @@
 export enum QRTypeEnum {
   VCard = 'VCard',
   URL = 'URL',
-  WiFi = 'Wi-Fi',
+  WiFi = 'WiFi',
   Location = 'Location',
   Event = 'Event',
 }
