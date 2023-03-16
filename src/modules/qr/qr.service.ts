@@ -7,7 +7,17 @@ import { QrBadge } from './schemas/qr.schema';
 import { QrRepository } from './qr.repository';
 import { CustomerRepository } from '../customer/customer.repository';
 import { QRTypeEnum } from './qr-type.enum';
-import { CustomerData, VCardData } from './customer-data.interface';
+import {
+  CustomerData,
+  EventData,
+  LocationData,
+  URLData,
+  VCardData,
+  WiFiData,
+} from './customer-data.interface';
+
+type CustomerDataType = VCardData | URLData | WiFiData | LocationData | EventData | CustomerData;
+
 
 @Injectable()
 export class QrService {
@@ -17,17 +27,59 @@ export class QrService {
     private readonly customerRepository: CustomerRepository,
   ) {}
 
-  async generateData(
-    qrType: QRTypeEnum,
-    customerData: CustomerData | VCardData,
-    customer_id: string,
-  ) {
+
+
+  async generateData(qrType: QRTypeEnum, customerData: CustomerDataType, customer_id: string) {
+    let data;
     switch (qrType) {
       case QRTypeEnum.VCard:
-        const VCardData = customerData as VCardData;
-        const data = `BEGIN:VCARD\nVERSION:2.1\nN:${VCardData.lastName};${VCardData.firstName}\nFN:${VCardData.firstName} ${VCardData.lastName}\nTEL:${VCardData.phoneNumber}\nEMAIL:${VCardData.email}\nEND:VCARD`;
-        return data;
-
+        if ('firstName' in customerData && 'lastName' in customerData && 'phoneNumber' in customerData) {
+          data = `BEGIN:VCARD\nVERSION:2.1\nN:${customerData.lastName};${customerData.firstName}\nFN:${customerData.firstName} ${customerData.lastName}\nTEL:${customerData.phoneNumber}\nEMAIL:${customerData.email}\nEND:VCARD`;
+          return data;
+        } else {
+          throw new BadRequestException('Invalid customer data type for VCard QR');
+        }
+  
+      case QRTypeEnum.URL:
+        if ('url' in customerData) {
+          data = `URL:${customerData.url}`;
+          return data;
+        } else {
+          throw new BadRequestException('Invalid customer data type for URL QR');
+        }
+  
+      case QRTypeEnum.WiFi:
+        if ('ssid' in customerData && 'password' in customerData) {
+          data = `WIFI:T:WPA;S:${customerData.ssid};P:${customerData.password};;`;
+          return data;
+        } else {
+          throw new BadRequestException('Invalid customer data type for WiFi QR');
+        }
+  
+      case QRTypeEnum.Location:
+        if ('latitude' in customerData && 'longitude' in customerData && 'altitude' in customerData) {
+          data = `geo:${customerData.latitude},${customerData.longitude},${customerData.altitude}`;
+          return data;
+        } else {
+          throw new BadRequestException('Invalid customer data type for Location QR');
+        }
+  
+      case QRTypeEnum.Event:
+        if (
+          'summary' in customerData &&
+          'start' in customerData &&
+          'end' in customerData &&
+          'location' in customerData &&
+          'description' in customerData
+        ) {
+          const start = new Date(customerData.start).toISOString().replace(/[-:]/g, '').slice(0, -5) + 'Z';
+          const end = new Date(customerData.end).toISOString().replace(/[-:]/g, '').slice(0, -5) + 'Z';
+          data = `BEGIN:VEVENT\nSUMMARY:${customerData.summary}\nDTSTART:${start}\nDTEND:${end}\nLOCATION:${customerData.location}\nDESCRIPTION:${customerData.description}\nEND:VEVENT`;
+          return data;
+        } else {
+          throw new BadRequestException('Invalid customer data type for Event QR');
+        }
+  
       default:
         throw new BadRequestException('Invalid QR type');
     }
