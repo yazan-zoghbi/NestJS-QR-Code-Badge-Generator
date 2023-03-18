@@ -59,15 +59,15 @@ export class QrRepository {
     return this.qrTypeModel.findById(id);
   }
 
-  async findQRTypeByName(name:QRTypeEnum){
+  async findQRTypeByName(name: QRTypeEnum): Promise<QrType>{
     const qrType = await this.qrTypeModel.findOne({ name: name }).exec();
 
     if (!qrType) {
       throw new NotFoundException(`QR type ${name} not found`);
     }
 
-    return qrType
-    }
+    return qrType;
+  }
 
   async findAllQrTypes(): Promise<QrType[]> {
     return this.qrTypeModel.find();
