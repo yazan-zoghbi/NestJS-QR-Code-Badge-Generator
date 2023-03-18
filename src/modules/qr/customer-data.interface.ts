@@ -1,5 +1,5 @@
 export interface CustomerData {
-  name: string;
+  name?: string;
   email?: string;
 }
 
