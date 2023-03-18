@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
-import { Customer } from 'src/modules/customer/schema/customer.schema';
+import { Customer } from '../../customer/schema/customer.schema';
 import { QrType } from './qr.type.schema';
 
 export interface QrBadge {
